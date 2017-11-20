@@ -1,10 +1,11 @@
 {
-  "name": "moziot-adapter-gpio",
+  "name": "gpio-adapter",
   "version": "0.2.1",
   "description": "GPIO adapter plugin for Mozilla IoT Gateway",
   "main": "index.js",
   "keywords": [
-    "moziot",
+    "mozilla",
+    "iot",
     "adapter",
     "gpio"
   ],
