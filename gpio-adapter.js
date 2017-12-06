@@ -17,8 +17,8 @@ var Property = require('../property');
 const THING_TYPE_ON_OFF_SWITCH = 'onOffSwitch';
 
 class GpioProperty extends Property {
-  constructor(device, name, type) {
-    super(device, name, type);
+  constructor(device, name, propertyDescr) {
+    super(device, name, propertyDescr);
     this.setCachedValue(this.device.gpio.readSync());
     this.device.notifyPropertyChanged(this);
   }
@@ -100,7 +100,7 @@ class GpioDevice extends Device {
   initOnOffSwitch() {
     this.type = THING_TYPE_ON_OFF_SWITCH;
     this.properties.set('on',
-      new GpioProperty(this, 'on', 'boolean', this.pinConfig.pin));
+      new GpioProperty(this, 'on', {type: 'boolean'}, this.pinConfig.pin));
   }
 }
 
