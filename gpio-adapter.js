@@ -89,7 +89,7 @@ class GpioDevice extends Device {
       if (pinConfig.edge === undefined) {
         pinConfig.edge = 'both';
       }
-      if (pinConfig.debounce === undefined) {
+      if (!pinConfig.hasOwnProperty('debounce')) {
         pinConfig.debounce = 10;  // msec
       }
       this.gpio = new Gpio(pin, 'in', pinConfig.edge);
