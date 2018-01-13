@@ -79,14 +79,14 @@ class GpioDevice extends Device {
     var id = 'gpio-' + pin;
     super(adapter, id);
 
-    if (pinConfig.direction === undefined) {
+    if (!pinConfig.hasOwnProperty('direction')) {
       pinConfig.direction = 'in';
     }
-    if (pinConfig.name === undefined) {
+    if (!pinConfig.hasOwnProperty('name')) {
       pinConfig.name = id;
     }
     if (pinConfig.direction == 'in') {
-      if (pinConfig.edge === undefined) {
+      if (!pinConfig.hasOwnProperty('edge')) {
         pinConfig.edge = 'both';
       }
       if (!pinConfig.hasOwnProperty('debounce')) {
@@ -100,13 +100,10 @@ class GpioDevice extends Device {
       // even if the direction is already set to out. This has a side
       // effect of setting the value to zero, so for the time being
       // we reflect that behaviour.
-      if (pinConfig.value === undefined) {
+      if (!pinConfig.hasOwnProperty('value')) {
         pinConfig.value = 0;
       }
-
-      if (pinConfig.value !== undefined) {
-        this.gpio.writeSync(pinConfig.value);
-      }
+      this.gpio.writeSync(pinConfig.value);
     }
     pinConfig.pin = pin;
     this.pinConfig = pinConfig;
@@ -126,7 +123,7 @@ class GpioDevice extends Device {
         break;
 
       default:
-        console.error('  Unsupported direction:', pinConfig.direction);
+        console.error('Unsupported direction:', pinConfig.direction);
         break;
     }
   }
