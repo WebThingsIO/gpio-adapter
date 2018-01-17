@@ -1,6 +1,6 @@
 {
   "name": "gpio-adapter",
-  "version": "0.3.0-pre4",
+  "version": "0.3.0-pre5",
   "description": "GPIO adapter plugin for Mozilla IoT Gateway",
   "main": "index.js",
   "keywords": [
@@ -9,14 +9,14 @@
     "adapter",
     "gpio"
   ],
-  "homepage": "https://iot.mozilla.org/",
+  "homepage": "https://github.com/mozilla-iot/gpio-adapter",
   "license": "MPL-2.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/mozilla-iot/gateway.git"
+    "url": "https://github.com/mozilla-iot/gpio-adapter.git"
   },
   "bugs": {
-    "url": "https://github.com/mozilla-iot/gateway/issues"
+    "url": "https://github.com/mozilla-iot/gpio-adapter/issues"
   },
   "files": [
     "LICENSE",
