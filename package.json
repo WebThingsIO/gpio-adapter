@@ -32,7 +32,7 @@
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
-      "pins": {
+      "gpios": {
         "18": {
           "name": "led",
           "direction": "out",

@@ -151,8 +151,19 @@ class GpioAdapter extends Adapter {
   constructor(addonManager, manifest) {
     super(addonManager, manifest.name, manifest.name);
     addonManager.addAdapter(this);
-    for (var pin in manifest.moziot.config.pins) {
-      new GpioDevice(this, pin, manifest.moziot.config.pins[pin]);
+
+    let gpios = {};
+
+    if (manifest.moziot.config.hasOwnProperty('pins')) {
+      gpios = Object.assign(gpios, manifest.moziot.config.pins);
+    }
+
+    if (manifest.moziot.config.hasOwnProperty('gpios')) {
+      gpios = Object.assign(gpios, manifest.moziot.config.gpios);
+    }
+
+    for (const pin in gpios) {
+      new GpioDevice(this, pin, gpios[pin]);
     }
   }
 }
