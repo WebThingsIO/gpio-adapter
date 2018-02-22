@@ -154,6 +154,7 @@ class GpioAdapter extends Adapter {
 
     let gpios = {};
 
+    // The 'gpios' config item used to be 'pins'. Retain compatibility.
     if (manifest.moziot.config.hasOwnProperty('pins')) {
       gpios = Object.assign(gpios, manifest.moziot.config.pins);
     }
