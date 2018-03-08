@@ -1,6 +1,6 @@
 {
   "name": "gpio-adapter",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "GPIO adapter plugin for Mozilla IoT Gateway",
   "main": "index.js",
   "keywords": [
@@ -22,8 +22,12 @@
     "LICENSE",
     "SHA256SUMS",
     "gpio-adapter.js",
-    "index.js"
+    "index.js",
+    "node_modules"
   ],
+  "dependencies": {
+    "onoff": "^1.2.0"
+  },
   "moziot": {
     "api": {
       "min": 1,
