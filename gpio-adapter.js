@@ -43,7 +43,8 @@ class GpioProperty extends Property {
           this.update();
           console.log('GPIO:', this.name, ' was changed to:', this.value);
         } else {
-          // If we're debouncing - ignore any extra edges during the debounce period
+          // If we're debouncing - ignore any extra edges during the debounce
+          // period
           if (!this.debouncing) {
             this.debouncing = true;
             setTimeout(() => {
@@ -173,7 +174,17 @@ class GpioAdapter extends Adapter {
     }
 
     if (manifest.moziot.config.hasOwnProperty('gpios')) {
-      gpios = Object.assign(gpios, manifest.moziot.config.gpios);
+      if (Array.isArray(manifest.moziot.config.gpios)) {
+        for (const gpio of manifest.moziot.config.gpios) {
+          gpios[gpio.pin.toFixed(0).toString()] = {
+            name: gpio.name,
+            direction: gpio.directioin,
+            value: gpio.value,
+          };
+        }
+      } else {
+        gpios = Object.assign(gpios, manifest.moziot.config.gpios);
+      }
     }
 
     for (const pin in gpios) {
