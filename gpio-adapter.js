@@ -174,6 +174,8 @@ class GpioAdapter extends Adapter {
     }
 
     if (manifest.moziot.config.hasOwnProperty('gpios')) {
+      // gpios used to be an object, but to make schema validation work, it is
+      // now an array.
       if (Array.isArray(manifest.moziot.config.gpios)) {
         for (const gpio of manifest.moziot.config.gpios) {
           gpios[gpio.pin.toFixed(0).toString()] = {
@@ -183,6 +185,7 @@ class GpioAdapter extends Adapter {
           };
         }
       } else {
+        // this handles the old object-based config
         gpios = Object.assign(gpios, manifest.moziot.config.gpios);
       }
     }
