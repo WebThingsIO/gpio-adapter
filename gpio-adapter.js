@@ -9,9 +9,9 @@
 
 'use strict';
 
-var Gpio = require('onoff').Gpio;
+const Gpio = require('onoff').Gpio;
 
-let Adapter, Device, Property;
+let Adapter, Database, Device, Property;
 try {
   Adapter = require('../adapter');
   Device = require('../device');
@@ -23,6 +23,7 @@ try {
 
   const gwa = require('gateway-addon');
   Adapter = gwa.Adapter;
+  Database = gwa.Database;
   Device = gwa.Device;
   Property = gwa.Property;
 }
@@ -197,7 +198,44 @@ class GpioAdapter extends Adapter {
 }
 
 function loadGpioAdapter(addonManager, manifest, _errorCallback) {
-  new GpioAdapter(addonManager, manifest);
+  let promise;
+
+  // Attempt to move to new config format
+  if (Database) {
+    const db = new Database(manifest.name);
+    db.open();
+    promise = db.loadConfig().then((config) => {
+      let oldGpios = {};
+
+      // The 'gpios' config item used to be 'pins'. Retain compatibility.
+      if (config.hasOwnProperty('pins')) {
+        oldGpios = Object.assign(oldGpios, config.pins);
+        delete config.pins;
+      }
+
+      if (config.hasOwnProperty('gpios') && !Array.isArray(config.gpios)) {
+        // this handles the old object-based config
+        oldGpios = Object.assign(oldGpios, config.gpios);
+      }
+
+      if (oldGpios) {
+        const gpios = [];
+
+        for (const gpioPin in oldGpios) {
+          const gpio = Object.assign({}, oldGpios[gpioPin]);
+          gpio.pin = parseInt(gpioPin, 10);
+          gpios.push(gpio);
+        }
+
+        manifest.moziot.config.gpios = gpios;
+        return db.saveConfig({gpios});
+      }
+    });
+  } else {
+    promise = Promise.resolve();
+  }
+
+  promise.then(() => new GpioAdapter(addonManager, manifest));
 }
 
 module.exports = loadGpioAdapter;
