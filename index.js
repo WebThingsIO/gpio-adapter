@@ -8,7 +8,7 @@
 
 'use strict';
 
-var fs = require('fs');
+const fs = require('fs');
 
 function maybeLoadGpioAdapter(addonManager, manifest, errorCallback) {
   // Verify that we have write permissions to /sys/class/gpio/export. Under
@@ -24,7 +24,7 @@ function maybeLoadGpioAdapter(addonManager, manifest, errorCallback) {
     return;
   }
 
-  var loadGpioAdapter = require('./gpio-adapter');
+  const loadGpioAdapter = require('./gpio-adapter');
   return loadGpioAdapter(addonManager, manifest, errorCallback);
 }
 

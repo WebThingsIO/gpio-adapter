@@ -2,6 +2,7 @@
   "name": "gpio-adapter",
   "version": "0.3.3",
   "description": "GPIO adapter plugin for Mozilla IoT Gateway",
+  "author": "Mozilla IoT",
   "main": "index.js",
   "keywords": [
     "mozilla",
@@ -36,11 +37,62 @@
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
-      "gpios": {
-        "18": {
-          "name": "led",
-          "direction": "out",
-          "value": 0
+      "gpios": [
+	{
+	  "pin": 18,
+	  "name": "led",
+	  "direction": "out",
+	  "value": 0
+	}
+      ]
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "gpios": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "pin"
+            ],
+            "properties": {
+              "pin": {
+                "type": "integer",
+		"minimum": 0
+              },
+              "name": {
+                "type": "string"
+              },
+              "direction": {
+                "type": "string",
+                "enum": [
+                  "in",
+                  "out"
+                ]
+              },
+              "value": {
+                "type": "number",
+		"enum": [
+		  0,
+		  1
+		]
+              },
+	      "edge": {
+		"type": "string",
+		"enum": [
+		  "none",
+		  "rising",
+		  "falling",
+		  "both"
+		]
+	      },
+	      "debounce": {
+		"type": "number",
+		"minimum": 0
+	      }
+            }
+          }
         }
       }
     }
