@@ -181,7 +181,7 @@ class GpioAdapter extends Adapter {
         for (const gpio of manifest.moziot.config.gpios) {
           gpios[gpio.pin.toFixed(0).toString()] = {
             name: gpio.name,
-            direction: gpio.directioin,
+            direction: gpio.direction,
             value: gpio.value,
           };
         }
@@ -219,15 +219,14 @@ function loadGpioAdapter(addonManager, manifest, _errorCallback) {
         oldGpios = Object.assign(oldGpios, config.gpios);
       }
 
-      if (oldGpios) {
-        const gpios = [];
+      const gpios = [];
 
-        for (const gpioPin in oldGpios) {
-          const gpio = Object.assign({}, oldGpios[gpioPin]);
-          gpio.pin = parseInt(gpioPin, 10);
-          gpios.push(gpio);
-        }
-
+      for (const gpioPin in oldGpios) {
+        const gpio = Object.assign({}, oldGpios[gpioPin]);
+        gpio.pin = parseInt(gpioPin, 10);
+        gpios.push(gpio);
+      }
+      if (gpios.length > 0) {
         manifest.moziot.config.gpios = gpios;
         return db.saveConfig({gpios});
       }
