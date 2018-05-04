@@ -1,4 +1,8 @@
-#!/bin/bash
+#!/bin/bash -e
+yarn --version > /dev/null 2>&1 \
+|| { echo "error: yarn not found (try: npm install -g yarn)" ; exit 1; }
+
+date=$(git log -1 --date=short --pretty=format:%cd || date -u)
 
 rm -rf node_modules
 if [ -z "${ADDON_ARCH}" ]; then
@@ -23,6 +27,7 @@ tar xzf ${TARFILE}
 rm ${TARFILE}
 TARFILE_ARCH="${TARFILE/.tgz/${TARFILE_SUFFIX}.tgz}"
 cp -r node_modules ./package
-tar czf ${TARFILE_ARCH} package
+GZIP="-n" tar czf "${TARFILE_ARCH}" --mtime="${date}" package
 rm -rf package
 echo "Created ${TARFILE_ARCH}"
+sha256sum "${TARFILE_ARCH}"
