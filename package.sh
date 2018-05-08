@@ -23,6 +23,9 @@ rm -f SHA256SUMS
 sha256sum package.json *.js LICENSE > SHA256SUMS
 find node_modules -type f -exec sha256sum {} \; >> SHA256SUMS
 TARFILE="$(npm pack)"
+if [ "${ADDON_ARCH}" == "darwin-x64" ]; then
+  alias tar=gtar
+fi
 tar xzf ${TARFILE}
 rm ${TARFILE}
 TARFILE_ARCH="${TARFILE/.tgz/${TARFILE_SUFFIX}.tgz}"
