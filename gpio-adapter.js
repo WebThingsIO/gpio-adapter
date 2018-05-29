@@ -43,17 +43,15 @@ class GpioProperty extends Property {
         if (pinConfig.debounce === 0) {
           this.update();
           console.log('GPIO:', this.name, ' was changed to:', this.value);
-        } else {
+        } else if (!this.debouncing) {
           // If we're debouncing - ignore any extra edges during the debounce
           // period
-          if (!this.debouncing) {
-            this.debouncing = true;
-            setTimeout(() => {
-              this.debouncing = false;
-              this.update();
-              console.log('GPIO:', this.device.name, 'changed to:', this.value);
-            }, pinConfig.debounce);
-          }
+          this.debouncing = true;
+          setTimeout(() => {
+            this.debouncing = false;
+            this.update();
+            console.log('GPIO:', this.device.name, 'changed to:', this.value);
+          }, pinConfig.debounce);
         }
       });
     }
@@ -91,7 +89,7 @@ class GpioProperty extends Property {
 
 class GpioDevice extends Device {
   constructor(adapter, pin, pinConfig) {
-    var id = 'gpio-' + pin;
+    const id = `gpio-${pin}`;
     super(adapter, id);
 
     if (!pinConfig.hasOwnProperty('direction')) {
@@ -144,21 +142,19 @@ class GpioDevice extends Device {
   }
 
   asDict() {
-    var dict = super.asDict();
+    const dict = super.asDict();
     dict.pinConfig = this.pinConfig;
     return dict;
   }
 
   initBinarySensor() {
     this.type = THING_TYPE_BINARY_SENSOR;
-    this.properties.set('on',
-      new GpioProperty(this, 'on', {type: 'boolean'}));
+    this.properties.set('on', new GpioProperty(this, 'on', {type: 'boolean'}));
   }
 
   initOnOffSwitch() {
     this.type = THING_TYPE_ON_OFF_SWITCH;
-    this.properties.set('on',
-      new GpioProperty(this, 'on', {type: 'boolean'}));
+    this.properties.set('on', new GpioProperty(this, 'on', {type: 'boolean'}));
   }
 }
 
