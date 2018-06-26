@@ -149,12 +149,31 @@ class GpioDevice extends Device {
 
   initBinarySensor() {
     this.type = THING_TYPE_BINARY_SENSOR;
-    this.properties.set('on', new GpioProperty(this, 'on', {type: 'boolean'}));
+    this['@type'] = ['BinarySensor'];
+    this.properties.set(
+      'on',
+      new GpioProperty(
+        this,
+        'on',
+        {
+          '@type': 'BooleanProperty',
+          type: 'boolean',
+        }));
   }
 
   initOnOffSwitch() {
     this.type = THING_TYPE_ON_OFF_SWITCH;
-    this.properties.set('on', new GpioProperty(this, 'on', {type: 'boolean'}));
+    this['@type'] = ['OnOffSwitch'];
+    this.properties.set(
+      'on',
+      new GpioProperty(
+        this,
+        'on',
+        {
+          '@type': 'OnOffProperty',
+          label: 'On/Off',
+          type: 'boolean',
+        }));
   }
 }
 
