@@ -1,10 +1,13 @@
 {
   "name": "gpio-adapter",
   "display_name": "GPIO",
-  "version": "0.4.0",
+  "version": "0.6.1",
   "description": "GPIO adapter plugin for Mozilla IoT Gateway",
   "author": "Mozilla IoT",
   "main": "index.js",
+  "scripts": {
+    "lint": "eslint ."
+  },
   "keywords": [
     "mozilla",
     "iot",
@@ -31,23 +34,25 @@
     "onoff": "^1.2.0"
   },
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "eslint": "^4.19.1"
   },
   "moziot": {
     "api": {
-      "min": 1,
+      "min": 2,
       "max": 2
     },
     "plugin": true,
     "exec": "{nodeLoader} {path}",
     "config": {
       "gpios": [
-	{
-	  "pin": 18,
-	  "name": "led",
-	  "direction": "out",
-	  "value": 0
-	}
+        {
+          "pin": 18,
+          "name": "led",
+          "direction": "out",
+          "value": 0,
+          "activeLow": false
+        }
       ]
     },
     "schema": {
@@ -63,7 +68,7 @@
             "properties": {
               "pin": {
                 "type": "integer",
-		"minimum": 0
+                "minimum": 0
               },
               "name": {
                 "type": "string"
@@ -77,24 +82,27 @@
               },
               "value": {
                 "type": "number",
-		"enum": [
-		  0,
-		  1
-		]
+                "enum": [
+                  0,
+                  1
+                ]
               },
-	      "edge": {
-		"type": "string",
-		"enum": [
-		  "none",
-		  "rising",
-		  "falling",
-		  "both"
-		]
-	      },
-	      "debounce": {
-		"type": "number",
-		"minimum": 0
-	      }
+              "edge": {
+                "type": "string",
+                "enum": [
+                  "none",
+                  "rising",
+                  "falling",
+                  "both"
+                ]
+              },
+              "debounce": {
+                "type": "number",
+                "minimum": 0
+              },
+              "activeLow": {
+                "type": "boolean"
+              }
             }
           }
         }
