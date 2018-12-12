@@ -76,7 +76,8 @@
               "direction": {
                 "type": "string",
                 "enum": [
-                  "in",
+                  "in - BinarySensor",
+                  "in - PushButton",
                   "out"
                 ]
               },

@@ -12,8 +12,11 @@
 const Gpio = require('onoff').Gpio;
 const {Adapter, Database, Device, Event, Property} = require('gateway-addon');
 
-const THING_TYPE_ON_OFF_SWITCH = 'onOffSwitch';
-const THING_TYPE_BINARY_SENSOR = 'binarySensor';
+// The following show up in package.json in the 'direction' field.
+const DIRECTION_INPUT = 'in'; // used with .startsWith
+const DIRECTION_INPUT_BINARY_SENSOR = 'in - BinarySensor';
+const DIRECTION_INPUT_PUSH_BUTTON = 'in - PushButton';
+const DIRECTION_OUTPUT = 'out';
 
 class GpioProperty extends Property {
   constructor(device, name, propertyDescr) {
@@ -22,7 +25,7 @@ class GpioProperty extends Property {
     this.update();
 
     const pinConfig = this.device.pinConfig;
-    if (pinConfig.direction === 'in') {
+    if (pinConfig.direction.startsWith(DIRECTION_INPUT)) {
       this.device.gpio.watch(() => {
         if (pinConfig.debounce === 0) {
           this.update();
@@ -83,7 +86,10 @@ class GpioDevice extends Device {
     const options = {};
 
     if (!pinConfig.hasOwnProperty('direction')) {
-      pinConfig.direction = 'in';
+      pinConfig.direction = DIRECTION_INPUT_BINARY_SENSOR;
+    }
+    if (pinConfig.direction === DIRECTION_INPUT) {
+      pinConfig.direction = DIRECTION_INPUT_BINARY_SENSOR;
     }
     if (pinConfig.hasOwnProperty('activeLow')) {
       options.activeLow = pinConfig.activeLow;
@@ -91,7 +97,7 @@ class GpioDevice extends Device {
     if (!pinConfig.hasOwnProperty('name')) {
       pinConfig.name = id;
     }
-    if (pinConfig.direction == 'in') {
+    if (pinConfig.direction.startsWith(DIRECTION_INPUT)) {
       if (!pinConfig.hasOwnProperty('edge')) {
         pinConfig.edge = 'both';
       }
@@ -118,12 +124,17 @@ class GpioDevice extends Device {
     console.log('GPIO:', this.pinConfig);
     switch (pinConfig.direction) {
 
-      case 'in':
+      case DIRECTION_INPUT_BINARY_SENSOR:
         this.initBinarySensor();
         this.adapter.handleDeviceAdded(this);
         break;
 
-      case 'out':
+      case DIRECTION_INPUT_PUSH_BUTTON:
+        this.initPushButton();
+        this.adapter.handleDeviceAdded(this);
+        break;
+
+      case DIRECTION_OUTPUT:
         this.initOnOffSwitch();
         this.adapter.handleDeviceAdded(this);
         break;
@@ -141,8 +152,7 @@ class GpioDevice extends Device {
   }
 
   initBinarySensor() {
-    this.type = THING_TYPE_BINARY_SENSOR;
-    this['@type'] = ['BinarySensor', 'PushButton'];
+    this['@type'] = ['BinarySensor'];
     this.properties.set(
       'on',
       new GpioProperty(
@@ -153,6 +163,10 @@ class GpioDevice extends Device {
           type: 'boolean',
           readOnly: true,
         }));
+  }
+
+  initPushButton() {
+    this['@type'] = ['PushButton'];
     this.properties.set(
       'pushed',
       new GpioProperty(
@@ -174,7 +188,6 @@ class GpioDevice extends Device {
   }
 
   initOnOffSwitch() {
-    this.type = THING_TYPE_ON_OFF_SWITCH;
     this['@type'] = ['OnOffSwitch'];
     this.properties.set(
       'on',
@@ -264,6 +277,7 @@ function loadGpioAdapter(addonManager, manifest, _errorCallback) {
         gpios.push(gpio);
       }
       if (gpios.length > 0) {
+        console.log('gpios =', gpios);
         manifest.moziot.config.gpios = gpios;
         return db.saveConfig({gpios});
       }
