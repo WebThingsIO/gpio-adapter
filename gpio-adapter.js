@@ -10,26 +10,13 @@
 'use strict';
 
 const Gpio = require('onoff').Gpio;
+const {Adapter, Database, Device, Event, Property} = require('gateway-addon');
 
-let Adapter, Database, Device, Property;
-try {
-  Adapter = require('../adapter');
-  Device = require('../device');
-  Property = require('../property');
-} catch (e) {
-  if (e.code !== 'MODULE_NOT_FOUND') {
-    throw e;
-  }
-
-  const gwa = require('gateway-addon');
-  Adapter = gwa.Adapter;
-  Database = gwa.Database;
-  Device = gwa.Device;
-  Property = gwa.Property;
-}
-
-const THING_TYPE_ON_OFF_SWITCH = 'onOffSwitch';
-const THING_TYPE_BINARY_SENSOR = 'binarySensor';
+// The following show up in package.json in the 'direction' field.
+const DIRECTION_INPUT = 'in'; // used with .startsWith
+const DIRECTION_INPUT_BINARY_SENSOR = 'in - BinarySensor';
+const DIRECTION_INPUT_PUSH_BUTTON = 'in - PushButton';
+const DIRECTION_OUTPUT = 'out';
 
 class GpioProperty extends Property {
   constructor(device, name, propertyDescr) {
@@ -38,7 +25,7 @@ class GpioProperty extends Property {
     this.update();
 
     const pinConfig = this.device.pinConfig;
-    if (pinConfig.direction === 'in') {
+    if (pinConfig.direction.startsWith(DIRECTION_INPUT)) {
       this.device.gpio.watch(() => {
         if (pinConfig.debounce === 0) {
           this.update();
@@ -50,7 +37,7 @@ class GpioProperty extends Property {
           setTimeout(() => {
             this.debouncing = false;
             this.update();
-            console.log('GPIO:', this.device.name, 'changed to:', this.value);
+            console.log('GPIO:', this.name, 'changed to:', this.value);
           }, pinConfig.debounce);
         }
       });
@@ -84,6 +71,10 @@ class GpioProperty extends Property {
   update() {
     this.setCachedValue(this.device.gpio.readSync());
     this.device.notifyPropertyChanged(this);
+    if (this['@type'] == 'PushedProperty') {
+      const evt = this.value ? 'pressed' : 'released';
+      this.device.notifyEvent(evt);
+    }
   }
 }
 
@@ -92,22 +83,30 @@ class GpioDevice extends Device {
     const id = `gpio-${pin}`;
     super(adapter, id);
 
+    const options = {};
+
     if (!pinConfig.hasOwnProperty('direction')) {
-      pinConfig.direction = 'in';
+      pinConfig.direction = DIRECTION_INPUT_BINARY_SENSOR;
+    }
+    if (pinConfig.direction === DIRECTION_INPUT) {
+      pinConfig.direction = DIRECTION_INPUT_BINARY_SENSOR;
+    }
+    if (pinConfig.hasOwnProperty('activeLow')) {
+      options.activeLow = pinConfig.activeLow;
     }
     if (!pinConfig.hasOwnProperty('name')) {
       pinConfig.name = id;
     }
-    if (pinConfig.direction == 'in') {
+    if (pinConfig.direction.startsWith(DIRECTION_INPUT)) {
       if (!pinConfig.hasOwnProperty('edge')) {
         pinConfig.edge = 'both';
       }
       if (!pinConfig.hasOwnProperty('debounce')) {
         pinConfig.debounce = 10;  // msec
       }
-      this.gpio = new Gpio(pin, 'in', pinConfig.edge);
+      this.gpio = new Gpio(pin, 'in', pinConfig.edge, options);
     } else if (pinConfig.direction == 'out') {
-      this.gpio = new Gpio(pin, 'out');
+      this.gpio = new Gpio(pin, 'out', options);
 
       // Unfortunately, the onoff library writes to the direction file
       // even if the direction is already set to out. This has a side
@@ -125,12 +124,17 @@ class GpioDevice extends Device {
     console.log('GPIO:', this.pinConfig);
     switch (pinConfig.direction) {
 
-      case 'in':
+      case DIRECTION_INPUT_BINARY_SENSOR:
         this.initBinarySensor();
         this.adapter.handleDeviceAdded(this);
         break;
 
-      case 'out':
+      case DIRECTION_INPUT_PUSH_BUTTON:
+        this.initPushButton();
+        this.adapter.handleDeviceAdded(this);
+        break;
+
+      case DIRECTION_OUTPUT:
         this.initOnOffSwitch();
         this.adapter.handleDeviceAdded(this);
         break;
@@ -148,7 +152,6 @@ class GpioDevice extends Device {
   }
 
   initBinarySensor() {
-    this.type = THING_TYPE_BINARY_SENSOR;
     this['@type'] = ['BinarySensor'];
     this.properties.set(
       'on',
@@ -158,11 +161,33 @@ class GpioDevice extends Device {
         {
           '@type': 'BooleanProperty',
           type: 'boolean',
+          readOnly: true,
         }));
   }
 
+  initPushButton() {
+    this['@type'] = ['PushButton'];
+    this.properties.set(
+      'pushed',
+      new GpioProperty(
+        this,
+        'pushed',
+        {
+          '@type': 'PushedProperty',
+          type: 'boolean',
+          readOnly: true,
+        }));
+    this.addEvent('pressed', {
+      '@type': 'PressedEvent',
+      description: 'Button pressed',
+    });
+    this.addEvent('released', {
+      '@type': 'ReleasedEvent',
+      description: 'Button released',
+    });
+  }
+
   initOnOffSwitch() {
-    this.type = THING_TYPE_ON_OFF_SWITCH;
     this['@type'] = ['OnOffSwitch'];
     this.properties.set(
       'on',
@@ -174,6 +199,15 @@ class GpioDevice extends Device {
           label: 'On/Off',
           type: 'boolean',
         }));
+  }
+
+  notifyEvent(eventName, eventData) {
+    if (eventData) {
+      console.log(this.name, 'event:', eventName, 'data:', eventData);
+    } else {
+      console.log(this.name, 'event:', eventName);
+    }
+    this.eventNotify(new Event(this, eventName, eventData));
   }
 }
 
@@ -198,6 +232,7 @@ class GpioAdapter extends Adapter {
             name: gpio.name,
             direction: gpio.direction,
             value: gpio.value,
+            activeLow: gpio.activeLow,
           };
         }
       } else {
@@ -242,6 +277,7 @@ function loadGpioAdapter(addonManager, manifest, _errorCallback) {
         gpios.push(gpio);
       }
       if (gpios.length > 0) {
+        console.log('gpios =', gpios);
         manifest.moziot.config.gpios = gpios;
         return db.saveConfig({gpios});
       }

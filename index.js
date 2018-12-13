@@ -17,6 +17,7 @@ function maybeLoadGpioAdapter(addonManager, manifest, errorCallback) {
   // group allows non-root access.
   //
   // This file won't exist on Mac/Windows.
+
   try {
     fs.accessSync('/sys/class/gpio/export', fs.constants.W_OK);
   } catch (err) {
