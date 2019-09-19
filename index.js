@@ -9,8 +9,10 @@
 'use strict';
 
 const fs = require('fs');
+const GpioAdapter = require('./gpio-adapter');
+const manifest = require('./manifest.json');
 
-function maybeLoadGpioAdapter(addonManager, manifest, errorCallback) {
+module.exports = (addonManager, _, errorCallback) => {
   // Verify that we have write permissions to /sys/class/gpio/export. Under
   // regular linux, this file is owned by root, so the server would need to
   // run as the root user. On the Raspberry Pi, being a member of the gpio
@@ -21,12 +23,9 @@ function maybeLoadGpioAdapter(addonManager, manifest, errorCallback) {
   try {
     fs.accessSync('/sys/class/gpio/export', fs.constants.W_OK);
   } catch (err) {
-    errorCallback(manifest.name, 'No permissions to /sys/class/gpio/export');
+    errorCallback(manifest.id, 'No permissions to /sys/class/gpio/export');
     return;
   }
 
-  const loadGpioAdapter = require('./gpio-adapter');
-  return loadGpioAdapter(addonManager, manifest, errorCallback);
-}
-
-module.exports = maybeLoadGpioAdapter;
+  new GpioAdapter(addonManager);
+};
