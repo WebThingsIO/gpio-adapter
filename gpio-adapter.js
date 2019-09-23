@@ -226,9 +226,9 @@ class GpioAdapter extends Adapter {
     const db = new Database(manifest.id);
     db.open().then(() => {
       return db.loadConfig();
-    }).then((gpios) => {
-      for (const pin in gpios) {
-        new GpioDevice(this, pin, gpios[pin]);
+    }).then((config) => {
+      for (const pinConfig of config.gpios) {
+        new GpioDevice(this, pinConfig.pin, pinConfig);
       }
     }).catch(console.error);
   }
