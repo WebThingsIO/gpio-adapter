@@ -64,6 +64,14 @@ class GpioProperty extends Property {
           console.log('GPIO:', this.device.name, 'set to:', this.value);
           resolve(this.value);
           this.device.notifyPropertyChanged(this);
+          if (latching) {
+            setTimeout(500); // in mS
+            this.device.gpio.write(0);
+            this.setCachedValue(value = 0);
+            console.log('GPIO:', this.device.name, 'set to:', this.value);
+            resolve(this.value);
+            this.device.notifyPropertyChanged(this);
+          }
         }
       });
     });

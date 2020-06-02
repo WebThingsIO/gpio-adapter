@@ -53,6 +53,7 @@
           "name": "led",
           "direction": "out",
           "value": 0,
+          "latching": true,
           "activeLow": false
         }
       ]
@@ -102,6 +103,9 @@
               "debounce": {
                 "type": "number",
                 "minimum": 0
+              },
+              "latching": {
+                "type": "boolean"
               },
               "activeLow": {
                 "type": "boolean"

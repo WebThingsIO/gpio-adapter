@@ -20,6 +20,7 @@
         {
           "activeLow": false,
           "direction": "out",
+          "latching": true,
           "name": "led",
           "pin": 18,
           "value": 0
@@ -72,6 +73,9 @@
                 "minimum": 0,
                 "type": "number"
               },
+              "latching": {
+                "type": "boolean"
+              },
               "activeLow": {
                 "type": "boolean"
               }
@@ -82,5 +86,5 @@
     }
   },
   "short_name": "GPIO",
-  "version": "0.7.1"
+  "version": "0.7.2"
 }
