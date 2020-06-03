@@ -76,6 +76,7 @@ class GpioProperty extends Property {
       });
     });
   }
+  
 
   update() {
     this.setCachedValue(this.device.gpio.readSync());
