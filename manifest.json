@@ -20,6 +20,7 @@
         {
           "activeLow": false,
           "direction": "out",
+          "latching": true,
           "name": "led",
           "pin": 18,
           "value": 0
@@ -73,6 +74,9 @@
                 "type": "number"
               },
               "activeLow": {
+                "type": "boolean"
+              },
+              "latching": {
                 "type": "boolean"
               }
             }
