@@ -66,7 +66,7 @@ class GpioProperty extends Property {
           this.device.notifyPropertyChanged(this);
         }
       });
-      if (true) {
+      if (!this.device.pinConfig.latching) {
         setTimeout(() => {
           value = 0; 
           this.device.gpio.write(value ? 1 : 0, (err) => {
