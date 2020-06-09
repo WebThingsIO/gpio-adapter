@@ -53,8 +53,9 @@
           "name": "led",
           "direction": "out",
           "value": 0,
-          "latching": true,
-          "activeLow": false
+          "activeLow": false,
+          "unlatch": false,
+          "unlatchDelay": 500
         }
       ]
     },
@@ -107,8 +108,12 @@
               "activeLow": {
                 "type": "boolean"
               },
-              "latching": {
+              "unlatch": {
                 "type": "boolean"
+              },
+              "unlatchDelay": {
+                "type": "number",
+                "minimum": 0
               }
             }
           }

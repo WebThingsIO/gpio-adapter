@@ -23,6 +23,8 @@
           "latching": true,
           "name": "led",
           "pin": 18,
+          "unlatch": false,
+          "unlatchDelay": 500,
           "value": 0
         }
       ]
@@ -76,9 +78,12 @@
               "activeLow": {
                 "type": "boolean"
               },
-              "latching": {
+              "unlatch": {
                 "type": "boolean"
-              }
+              },
+              "unlatchDelay": {
+                "type": "number"
+              } 
             }
           }
         }

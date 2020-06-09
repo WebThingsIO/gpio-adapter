@@ -66,7 +66,7 @@ class GpioProperty extends Property {
           this.device.notifyPropertyChanged(this);
         }
       });
-      if (!this.device.pinConfig.latching) {
+      if (this.device.pinConfig.unlatch) {
         setTimeout(() => {
           value = 0; 
           this.device.gpio.write(value ? 1 : 0, (err) => {
@@ -81,7 +81,7 @@ class GpioProperty extends Property {
               this.device.notifyPropertyChanged(this);
             }
           });
-        }, 500);
+        }, this.device.pinConfig.unlatchDelay);
       }
     });
   }
