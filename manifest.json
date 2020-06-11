@@ -20,11 +20,10 @@
         {
           "activeLow": false,
           "direction": "out",
-          "latching": true,
           "name": "led",
           "pin": 18,
-          "unlatch": false,
-          "unlatchDelay": 500,
+          "momentaryButton": false,
+          "buttonUnlatchDelay": 500,
           "value": 0
         }
       ]
@@ -78,11 +77,12 @@
               "activeLow": {
                 "type": "boolean"
               },
-              "unlatch": {
+              "momentaryButton": {
                 "type": "boolean"
               },
-              "unlatchDelay": {
-                "type": "number"
+              "buttonUnlatchDelay": {
+                "type": "number",
+                "minimum": 0
               } 
             }
           }
