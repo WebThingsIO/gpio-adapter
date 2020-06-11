@@ -54,8 +54,13 @@
           "direction": "out",
           "value": 0,
           "activeLow": false,
+<<<<<<< HEAD
           "momentaryButton": false,
           "buttonUnlatchDelay": 500
+=======
+          "unlatch": false,
+          "unlatchDelay": 500
+>>>>>>> a3c79dc1f61ee8bba703211b74c32953143956b4
         }
       ]
     },
@@ -108,10 +113,17 @@
               "activeLow": {
                 "type": "boolean"
               },
+<<<<<<< HEAD
               "momentaryButton": {
                 "type": "boolean"
               },
               "buttonUnlatchDelay": {
+=======
+              "unlatch": {
+                "type": "boolean"
+              },
+              "unlatchDelay": {
+>>>>>>> a3c79dc1f61ee8bba703211b74c32953143956b4
                 "type": "number",
                 "minimum": 0
               }
