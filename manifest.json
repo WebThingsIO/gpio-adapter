@@ -22,7 +22,9 @@
           "direction": "out",
           "name": "led",
           "pin": 18,
-          "value": 0
+          "value": 0,
+          "momentaryButton": false,
+          "buttonUnlatchDelay": 500
         }
       ]
     },
@@ -74,6 +76,13 @@
               },
               "activeLow": {
                 "type": "boolean"
+              },
+              "momentaryButton": {
+                "type": "boolean"
+              },
+              "buttonUnlatchDelay": {
+                "type": "number",
+                "minimum": 0
               }
             }
           }
@@ -82,5 +91,5 @@
     }
   },
   "short_name": "GPIO",
-  "version": "0.7.1"
+  "version": "0.7.2"
 }
