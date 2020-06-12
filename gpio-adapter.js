@@ -66,6 +66,20 @@ class GpioProperty extends Property {
           this.device.notifyPropertyChanged(this);
         }
       });
+      if (this.device.pinConfig.momentaryButton) {
+        setTimeout(() => {
+          this.device.gpio.write(value = 0, (err) => {
+            if (err) {
+              console.error('GPIO: write for pin:', this.device.name, 'failed');
+              console.error(err);
+            } else {
+              this.setCachedValue(value);
+              console.log('GPIO:', this.device.name, 'set to:', this.value);
+              this.device.notifyPropertyChanged(this);
+            }
+          });
+        }, this.device.pinConfig.buttonUnlatchDelay);
+      }
     });
   }
 

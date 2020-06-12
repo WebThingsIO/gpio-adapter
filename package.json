@@ -1,7 +1,7 @@
 {
   "name": "gpio-adapter",
   "display_name": "GPIO",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "GPIO adapter plugin for Mozilla WebThings Gateway",
   "author": "Mozilla IoT",
   "main": "index.js",
@@ -53,7 +53,9 @@
           "name": "led",
           "direction": "out",
           "value": 0,
-          "activeLow": false
+          "activeLow": false,
+          "momentaryButton": false,
+          "buttonUnlatchDelay": 500
         }
       ]
     },
@@ -105,6 +107,13 @@
               },
               "activeLow": {
                 "type": "boolean"
+              },
+              "momentaryButton": {
+                "type": "boolean"
+              },
+              "buttonUnlatchDelay": {
+                "type": "number",
+                "minimum": 0
               }
             }
           }
