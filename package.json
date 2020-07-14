@@ -1,7 +1,7 @@
 {
   "name": "gpio-adapter",
   "display_name": "GPIO",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "GPIO adapter plugin for Mozilla WebThings Gateway",
   "author": "Mozilla IoT",
   "main": "index.js",
@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0"
+    "eslint": "^7.4.0"
   },
   "moziot": {
     "api": {
