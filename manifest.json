@@ -1,6 +1,6 @@
 {
-  "author": "Mozilla IoT",
-  "description": "GPIO adapter plugin for Mozilla WebThings Gateway",
+  "author": "WebThingsIO",
+  "description": "GPIO adapter plugin for WebThings Gateway",
   "gateway_specific_settings": {
     "webthings": {
       "exec": "{nodeLoader} {path}",
@@ -9,7 +9,7 @@
       "strict_min_version": "0.10.0"
     }
   },
-  "homepage_url": "https://github.com/mozilla-iot/gpio-adapter",
+  "homepage_url": "https://github.com/WebThingsIO/gpio-adapter",
   "id": "gpio-adapter",
   "license": "MPL-2.0",
   "manifest_version": 1,
@@ -91,5 +91,5 @@
     }
   },
   "short_name": "GPIO",
-  "version": "0.7.4"
+  "version": "0.7.5"
 }
