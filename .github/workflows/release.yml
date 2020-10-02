@@ -34,7 +34,6 @@ jobs:
           'linux-arm',
           'linux-arm64',
           'linux-x64',
-          'darwin-x64',
         ]
         pair: [
           'node:8',
@@ -49,8 +48,6 @@ jobs:
             host-os: 'ubuntu-latest'
           - platform: 'linux-x64'
             host-os: 'ubuntu-latest'
-          - platform: 'darwin-x64'
-            host-os: 'macos-latest'
           - pair: 'node:8'
             language: 'node'
             version: '8'
